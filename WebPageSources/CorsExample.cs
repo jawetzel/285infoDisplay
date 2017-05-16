@@ -37,25 +37,6 @@ namespace B2kConstructionApi
         public void ConfigureServices(IServiceCollection services)
         {//begin method
 
-            //services.AddDbContext<Context>(options => options.UseSqlServer(Configuration.GetConnectionString("LiveConnection")));
-            services.AddDbContext<Context>(options => options.UseSqlServer(Configuration.GetConnectionString("LocalHostConnection")));
-   
-            services.AddScoped<DataAccess>();
-            // Account
-            services.AddScoped<UserDataAccess>();
-            services.AddScoped<SessionDataAccess>();
-            services.AddScoped<UsersRolesDataAccess>();
-            services.AddScoped<RoleDataAccess>();
-            // Order
-            services.AddScoped<OrderRequestDataAccess>();
-            services.AddScoped<OrderDataAccess>();
-            //Work
-            services.AddScoped<WorkSessionDataAccess>();
-            services.AddScoped<WorkImageDataAccess>();
-            services.AddScoped<ExpensesDataAccess>();
-            services.AddScoped<ExpenseTypeDataAccess>();
-            services.AddScoped<ImageTypeDataAccess>();
-
             // Add framework services.
             services.AddMvc();
 
@@ -91,18 +72,7 @@ namespace B2kConstructionApi
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            app.Use(async (routecontext, next) =>
-            {//begin define
-                await next();
-                if (routecontext.Response.StatusCode == 404 && !Path.HasExtension(routecontext.Request.Path.Value))
-                {//begin if
-                    routecontext.Request.Path = "/index.html";
-                    await next();
-                }//end if
-            });//end define
-            app.UseDefaultFiles(new DefaultFilesOptions { DefaultFileNames = new List<string> { "index.html" } })
-                .UseStaticFiles()
-                .UseMvc();
+            app.UseMvc();
 
             DbInitializer.Init(context);
         }//end method
